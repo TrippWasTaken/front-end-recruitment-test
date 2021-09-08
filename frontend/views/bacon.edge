@@ -1,8 +1,28 @@
 @layout('layouts/main')
 @set('title', 'Bacon factory')
-
 @section('body')
-  @!component('snowdog/bacon', {
-    img: '/images/bacon.jpg'
+<style>
+  section{
+    padding: 10px;
+  }
+
+  img{
+    height: 256px;
+    width: auto;
+  }
+</style>
+@!component('snowdog/bacon', {
+  img: '/images/bacon.jpg'
   })
+  
+    <script>
+      const moreBacon = () =>{
+        const baconSection = document.getElementsByTagName("section")[1]
+        const clone = document.getElementsByTagName("img")[0].cloneNode(true)
+        baconSection.appendChild(clone)
+      }
+      
+      const btn = document.getElementsByTagName("button")[0]
+      btn.addEventListener("click", moreBacon)
+    </script>
 @end

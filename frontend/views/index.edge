@@ -1,8 +1,9 @@
 @layout('layouts/main')
-@set('title', 'Home page')
+@set('title', 'Checkout')
 
 @section('body')
-  @!component('components/welcome', {
-    source: 'resources/views/index.edge'
-  })
+  <container class="main-cont">
+    @!component('components/customer-info')
+    @!component('components/cart-info')
+  </container>
 @end

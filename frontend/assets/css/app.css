@@ -28,7 +28,7 @@ a {
   text-decoration: none;
 }
 
-main {
+/* main {
   max-width: 620px;
   margin: auto;
   height: 100vh;
@@ -36,7 +36,7 @@ main {
   align-items: center;
   display: flex;
   justify-content: center;
-}
+} */
 
 .title {
   font-size: 50px;
