@@ -1,0 +1,37 @@
+@layout('layouts/main')
+@set('title', 'Checkout')
+
+@section('body')
+  <container class="main-cont">
+    @!component('components/customer-info')
+    <section id="checkout-cart-info" class="main-section">
+      <div id="checkout-cart-prices-cont">
+        <div id="checkout-cart-prices">
+            <span class="checkout-detail-heading">YOUR ORDER</span>
+            <div class="checkout-detail-items">
+              @each(item in state.cart.items)
+                  <div class="checkout-detail-wrapper">
+                      <span class="checkout-detail-name">{{item.name}}</span>
+                      <span class="checkout-detail-price">$ {{item.price}}</span>
+                  </div>
+                @end 
+            </div>
+            <div class="checkout-detail-items">
+              <div class="checkout-detail-wrapper">
+                  <span class="checkout-detail-name">Total Purchases</span>
+                  <span class="checkout-detail-price">$ {{state.cart.totals.subTotal}}</span>
+              </div>
+              <div class="checkout-detail-wrapper">
+                <span class="checkout-detail-name">Estimated Tax</span>
+                <span class="checkout-detail-price">$ {{state.cart.totals.tax}}</span>
+              </div>
+            </div>
+                <div class="checkout-detail-wrapper">
+                  <span class="checkout-detail-name-total">Total</span>
+                  <span class="checkout-detail-price-total">$ {{state.cart.totals.grandTotal}}</span>
+                </div>
+          </div>
+        </div>
+    </section>
+  </container>
+@end
