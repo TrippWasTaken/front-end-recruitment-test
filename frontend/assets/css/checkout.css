@@ -24,7 +24,7 @@ main {
 }
 
 #checkout-customer-info-cont {
-  width: 563px;
+  max-width: 563px;
 }
 
 .main-cont {
@@ -155,7 +155,7 @@ main {
   font-weight: bolder;
 }
 
-#checkout-purchase-btn::hover {
+#checkout-purchase-btn:hover {
   cursor: pointer;
 }
 
@@ -169,6 +169,7 @@ main {
 #checkout-cart-prices-cont {
   width: 300px;
   padding: 5px;
+  margin-bottom: 40px;
   margin-left: 10px;
   margin-top: 35px;
   background-color: #FFFFFF;
@@ -219,5 +220,16 @@ main {
   float: right;
   font-weight: bolder;
   font-size: 24px;
+}
+
+.null-error {
+  -webkit-box-shadow: inset 0px 0px 0px 2px #ff8888;
+          box-shadow: inset 0px 0px 0px 2px #ff8888;
+}
+
+.null-error div {
+  font-size: 0.75rem;
+  margin-top: 1rem;
+  color: #ff8888;
 }
 /*# sourceMappingURL=checkout.css.map */

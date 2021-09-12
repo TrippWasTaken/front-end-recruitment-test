@@ -28,14 +28,14 @@ a {
   text-decoration: none;
 }
 
-main {
+/* main {
   max-width: 1024px;
   margin: auto;
   padding: 0 30px;
   align-items: center;
   display: flex;
   justify-content: center;
-}
+} */
 
 .title {
   font-size: 50px;

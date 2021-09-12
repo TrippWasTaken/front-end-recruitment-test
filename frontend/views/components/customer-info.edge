@@ -1,23 +1,23 @@
 <section id="checkout-customer-info">
-    <form class="checkout-form" action="/order" method="POST">
-        <container class="section-cont">        
+    <form class="checkout-form" id="customer-checkout-data">
+        <div class="section-cont">        
             <span class="checkout-detail-heading"><span class="heading-circle">1</span> PERSONAL INFORMATION</span>
-            <container id="checkout-personal-info-cont" class="details-cont">
+            <div id="checkout-personal-info-cont" class="details-cont">
                 <div class="input-field-wrapper">
                     <span class="heading-text">First Name</span>
-                    <input type="text" placeholder="Elon">
+                    <input type="text" placeholder="Elon" id="first-name">
                 </div>
                 <div class="input-field-wrapper">
                     <span class="heading-text">Last Name</span>
-                    <input type="text" placeholder="Musk">
+                    <input type="text" placeholder="Musk" id="last-name">
                 </div>
                 <div class="input-field-wrapper fill">
                     <span class="heading-text">Email</span>
-                    <input type="email" placeholder="elon@spacex.com">
+                    <input type="text" placeholder="elon@spacex.com" id="email">
                 </div>
                 <div class="input-field-wrapper ">
                     <span class="heading-text">Country</span>
-                    <select class="checkout-dropdown">
+                    <select class="checkout-dropdown" id="country">
                         <option value="Afghanistan">Afghanistan</option>
                         <option value="Åland Islands">Åland Islands</option>
                         <option value="Albania">Albania</option>
@@ -266,33 +266,279 @@
                 </div>
                 <div class="input-field-wrapper">
                     <span class="heading-text">Postal Code</span>
-                    <input type="text" placeholder="10001">
+                    <input type="text" placeholder="10001" id="post-code">
                 </div>
                 <div class="input-field-wrapper fill">
                     <span class="heading-text">Phone Number</span>
-                    <input type="tel" placeholder="(212) 692-93-92 ">
+                    <input type="tel" placeholder="(212) 692-93-92 " id="phone">
                 </div>
-            </container>
-        </container>
-        <container class="section-cont">
+            </div>
+        </div>
+        <div class="section-cont">
             <span class="checkout-detail-heading"><span class="heading-circle">2</span> PAYMENT DETAILS <span class="material-icons checkout-icon">lock</span></span>
     
-            <container id="checkout-payment-info-cont" class="details-cont">
+            <div id="checkout-payment-info-cont" class="details-cont">
                 <div class="input-field-wrapper fill credit-card">
                     <span class="heading-text">Credit Card Number</span>
-                    <input type="text" placeholder="0000 - 0000 - 0000 - 0000">
+                    <input type="text" placeholder="0000 - 0000 - 0000 - 0000" id="credit-card">
                 </div>
                 <div class="input-field-wrapper">
                     <span class="heading-text">Security Code</span>
-                    <input type="text" placeholder="***">
+                    <input type="text" placeholder="***" id="cvv">
                 </div>
                 <div class="input-field-wrapper">
                     <span class="heading-text">Expiration Date</span>
-                    <input type="text" placeholder="MM / YY">
+                    <input type="text" placeholder="MM / YY" id="exp-date">
                 </div>
                 
                 <button type="submit" id="checkout-purchase-btn" class="fill"><span class="material-icons">shopping_cart</span>COMPLETE PURCHASE</button>
-            </container>
-        </container>
+            </div>
+        </div>
     </form>
 </section>
+
+<script>
+    const form = document.getElementById("customer-checkout-data")
+
+    const firstName = document.getElementById("first-name")
+    const lastName = document.getElementById("last-name")
+    const email = document.getElementById("email")
+    const country = document.getElementById("country")
+    const postCode = document.getElementById("post-code")
+    const phone = document.getElementById("phone")
+
+    const creditCard = document.getElementById("credit-card")
+    const cvv = document.getElementById("cvv")
+    const expDate = document.getElementById("exp-date")
+
+    const err = "null-error"
+    const letters = /^[A-Za-z]+$/
+    const numbers = /^[0-9]*$/
+    const expPat = /^([0-9]{2})\/?([0-9]{2})$/
+
+    const limitInput = (e) =>{
+        const month = /^\d\d$/
+
+        if(!numbers.test(e.key)){
+            expDate.value = ""
+        }
+        
+        if(expDate.value.length > 4){
+            expDate.value = expDate.value.substr(0,4)
+            if(!expPat.test(expDate.value)){
+                expDate.value = expDate.value.substr(0,4)
+            }
+        }
+
+        if(e.key >= 0 && e.key <=9 && month.test(expDate.value)){
+            expDate.value = expDate.value += "/"
+        }
+    }
+
+    expDate.addEventListener("keydown", limitInput);
+
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault()
+
+        if(nameCheck(firstName) && nameCheck(lastName) && emailCheck(email) && postCheck(postCode) && phoneCheck(phone) && cardCheck(creditCard) && cvvCheck(cvv) && expCheck(expDate)){
+            const formData = new FormData;
+            formData.append("firstName", firstName.value.trim())
+            formData.append("lastName", lastName.value.trim())
+            formData.append("email", email.value.trim())
+            formData.append("country", country.value.trim())
+            formData.append("postalCode", postCode.value.trim())
+            formData.append("phone", phone.value.trim())
+            formData.append("creditCard", creditCard.value.trim())
+            formData.append("CVV", cvv.value.trim())
+            formData.append("expDate", expDate.value.trim())
+
+
+            fetch("/order",{
+                method: "POST",
+                body: formData
+            })
+            .then(response =>response.json())
+            .then(response => {
+                for(let m in response){
+                    alert("Your data went through and the server returned ( " + m + ": " + response[m] + ")")
+                }
+            })
+            .catch(error =>{
+                console.log(error)
+            })
+        }
+    })
+    
+    const checkNull = (element) =>{    
+        if(!element.value){
+            if(!element.parentElement.classList.contains(err)){
+                element.parentElement.classList.add(err)
+                errorMessage(element, "This is a required field")
+            }
+            return true
+        }else{
+            if(element.parentElement.classList.contains(err)){
+                errorRemove(element, err)
+            }
+            return false
+        }
+    }
+
+    const checkFormat = (element, r, isN) =>{
+
+        if(!r.test(element.value)){
+            if(!element.parentElement.classList.contains(err)){
+                element.parentElement.classList.add(err)
+                if(!isN){
+                    errorMessage(element, "Please only use letters")
+                }
+                else{
+                    errorMessage(element, "Please only use numbers")
+                }
+            }
+            return false
+        }else{
+            if(element.parentElement.classList.contains(err)){
+                errorRemove(element, err)
+            }
+            return true
+        }
+    }
+
+    const checkLen = (element, len) => {
+        if(element.value.length > len){
+            if(!element.parentElement.classList.contains(err)){
+                element.parentElement.classList.add(err)
+                errorMessage(element, "Field cannot exceed "+ len + " characters")
+            }
+            return true
+        }else{
+            if(element.parentElement.classList.contains(err)){
+                errorRemove(element, err)
+            }
+            return false
+        }
+    }
+
+    const absLen = (element, len) => {
+        if(element.value.length !== len){
+            if(!element.parentElement.classList.contains(err)){
+                element.parentElement.classList.add(err)
+                errorMessage(element, "Field must contain "+ len + " characters")
+            }
+            return false
+        }else{
+            if(element.parentElement.classList.contains(err)){
+                errorRemove(element, err)
+            }
+            return true
+        }
+    }
+    
+
+    const nameCheck = (name) =>{
+        if(!checkNull(name)){
+            if(checkFormat(name, letters, false)){
+                if(!checkLen(name, 20)){
+                    return true
+                }
+                else{
+                    return false
+                }
+            }
+        }
+    }
+
+    const emailCheck = (email) =>{
+        const e = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if(!checkNull(email)){
+            if(!e.test(email.value)){
+                if(!email.parentElement.classList.contains(err)){
+                    email.parentElement.classList.add(err)
+                    errorMessage(email, "Please enter a valid email")
+                }
+                return false
+            }else{
+                if(email.parentElement.classList.contains(err)){
+                    errorRemove(email, err)
+                }
+                return true
+            }
+        }
+    }
+
+    const postCheck = (postCode) =>{
+        if(!checkNull(postCode)){
+            if(checkFormat(postCode, numbers, true)){
+                if(absLen(postCode, 5)){
+                    return true
+                }
+                else{
+                    return false
+                }
+            }
+        }
+    }
+
+    const phoneCheck = (phone) =>{
+        if(!checkNull(phone)){
+            if(checkFormat(phone, numbers, true)){
+                if(absLen(phone, 10)){
+                    return true
+                }else{
+                    return false
+                }
+            }
+        }
+    }
+
+    const cardCheck = (card, cvv, exp) =>{
+        if(!checkNull(card)){
+            if(checkFormat(card, numbers, true)){
+                if(absLen(card, 16)){
+                    return true
+                }else{
+                    return false
+                }
+            }
+        }
+    }
+
+    const cvvCheck = (cvv) =>{
+        if(!checkNull(cvv)){
+            if(checkFormat(cvv, numbers, true)){
+                if(absLen(cvv, 3)){
+                    return true
+                }else{
+                    return false
+                }
+            }
+        }
+    }
+
+    const expCheck = (exp) =>{
+        if(!checkNull(exp)){
+            if(checkFormat(exp, expPat, true)){
+                if(!checkLen(exp, 5)){
+                    return true
+                }else{
+                    return false
+                }
+            }
+        }
+    }
+
+    const errorRemove = (element, err) =>{
+        element.parentElement.classList.remove(err)
+        element.parentElement.removeChild(element.parentElement.lastElementChild)
+    }
+
+    const errorMessage = (element, message) =>{
+        const messageDiv = document.createElement("div")
+        const messageText = document.createTextNode(message)
+        messageDiv.appendChild(messageText)
+        element.parentElement.appendChild(messageDiv)
+    }
+
+</script>
